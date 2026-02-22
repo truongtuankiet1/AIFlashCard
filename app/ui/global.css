@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Modern Blue Theme Colors */
+    --color-primary: 14 165 233;
+    --color-primary-dark: 2 132 199;
+    --color-primary-light: 56 189 248;
+    --color-accent-cyan: 6 182 212;
+    --color-accent-indigo: 99 102 241;
+    --color-accent-teal: 20 184 166;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.18);
+
+    /* Background Mesh Colors */
+    --bg-mesh-1: rgba(14, 165, 233, 0.3);
+    --bg-mesh-2: rgba(6, 182, 212, 0.2);
+    --bg-mesh-3: rgba(99, 102, 241, 0.2);
+  }
+
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+
+  /* Glassmorphism Card */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl shadow-glass;
+  }
+
+  .glass-dark {
+    background: rgba(14, 165, 233, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 via-accent-cyan to-accent-indigo;
+  }
+
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 text-white font-semibold px-6 py-3 rounded-lg;
+    @apply hover:from-primary-700 hover:to-primary-600 transition-all duration-300;
+    @apply shadow-lg hover:shadow-glow active:scale-95;
+  }
+
+  .btn-glass {
+    @apply glass text-primary-700 font-semibold px-6 py-3 rounded-lg;
+    @apply hover:bg-white/90 transition-all duration-300;
+    @apply shadow-md hover:shadow-glass-lg;
+  }
+}
+
+@layer utilities {
+
+  /* Custom Scrollbar */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-primary-400 rounded-full;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-500;
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Mesh Background Container */
+  .mesh-bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: radial-gradient(at 0% 0%, #f0f9ff 0%, #e0f2fe 100%);
+  }
+
+  .mesh-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: blob-float 20s infinite alternate;
+  }
+
+  @keyframes blob-float {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+      transform: translate(100px, 50px) scale(1.1);
+    }
+  }
+
+  /* Floating Decorative Cards */
+  .floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.55);
+    /* White with 55% opacity */
+    backdrop-filter: blur(4px);
+    /* Significantly reduced from 12px for clarity */
+    -webkit-backdrop-filter: blur(4px);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    /* Even whiter border */
+    border-radius: 24px;
+    z-index: -1;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+    animation: card-float 15s infinite ease-in-out;
+  }
+
+  @keyframes card-float {
+
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
+  }
+}
+
+/* Number Input Styling */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

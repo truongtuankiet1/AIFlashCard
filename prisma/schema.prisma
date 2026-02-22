@@ -1,0 +1,220 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String     @id @default(cuid())
+  email                 String     @unique
+  password              String
+  name                  String?
+  encryptedApiKey       String?    // Encrypted user's personal OpenAI API key
+  age                   Int?
+  bio                   String?
+  avatar                String?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  decks                 Deck[]
+  userProgress          UserProgress[]
+  
+  // Gamification
+  coins                 BigInt       @default(0)
+  totalExp              BigInt       @default(0)
+  userPets              UserPet[]
+  userMissions          UserMission[]
+  transactions          Transaction[]
+
+  @@index([email])
+}
+
+model Deck {
+  id                    String     @id @default(cuid())
+  ownerId               String
+  owner                 User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  topic                 String
+  title                 String
+  description           String?
+  difficulty            String     @default("standard") // basic, standard, advanced
+  language              String     @default("english")  // Language for definitions
+  
+  cards                 Card[]
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  @@index([ownerId])
+  @@index([topic])
+}
+
+model Card {
+  id                    String     @id @default(cuid())
+  deckId                String
+  deck                  Deck       @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  
+  word                  String
+  partOfSpeech          String
+  definition            String
+  exampleSentence       String
+  phonetic             String?
+  translation          String?    // Translation in the target language
+  imageUrl             String?    // Optional image for the vocabulary
+  
+  createdAt             DateTime   @default(now())
+
+  userProgress          UserProgress[]
+
+  @@index([deckId])
+  @@index([word])
+}
+
+model UserProgress {
+  id                    String     @id @default(cuid())
+  userId                String
+  user                  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  cardId                String
+  card                  Card       @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  
+  // Spaced Repetition System (SM-2 Algorithm)
+  easinessFactor        Float      @default(2.5)  // Ranges from 1.3 to 2.5
+  interval              Int        @default(1)    // Days between reviews
+  repetitions           Int        @default(0)    // Number of successful repetitions
+  nextReviewDate        DateTime   @default(now())
+  
+  // Learning status
+  isKnown               Boolean    @default(false)
+  reviewCount           Int        @default(0)
+  
+  lastReviewDate        DateTime?
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  @@unique([userId, cardId])
+  @@index([userId])
+  @@index([nextReviewDate])
+}
+
+model APIKeyUsage {
+  id                    String     @id @default(cuid())
+  deckId                String
+  userId                String
+  
+  tokensUsed            Int
+  costEstimated         Float
+  generatedAt           DateTime   @default(now())
+
+  @@index([userId])
+  @@index([generatedAt])
+}
+
+model Pet {
+  id                    String     @id @default(cuid())
+  baseName              String
+  archetype             String     // MOTIVATOR, TSUNDERE, CHILL, TEACHER, MEME
+  baseImage             String
+  
+  userPets              UserPet[]
+  shopItems             ShopItem[]
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model UserPet {
+  id                    String     @id @default(cuid())
+  userId                String
+  user                  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  petId                 String
+  pet                   Pet        @relation(fields: [petId], references: [id], onDelete: Cascade)
+  
+  customName            String?
+  level                 Int        @default(1)
+  exp                   Int        @default(0)
+  mood                  Int        @default(100)
+  hunger                Int        @default(100)
+  affection             Int        @default(0)
+  isActive              Boolean    @default(false)
+  activeOutfit          Json?      // Store selected skin/accessories
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([petId])
+}
+
+model Mission {
+  id                    String     @id @default(cuid())
+  title                 String
+  description           String?
+  type                  String     // DAILY, MONTHLY
+  category              String     // CARDS, TIME, STREAK, ACCURACY
+  targetValue           Int
+  rewardCoins           Int
+  
+  userMissions          UserMission[]
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model UserMission {
+  id                    String     @id @default(cuid())
+  userId                String
+  user                  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  missionId             String
+  mission               Mission    @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  
+  currentValue          Int        @default(0)
+  isClaimed             Boolean    @default(false)
+  lastUpdated           DateTime   @default(now())
+  resetAt               DateTime
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  @@unique([userId, missionId, resetAt])
+  @@index([userId])
+}
+
+model ShopItem {
+  id                    String     @id @default(cuid())
+  name                  String
+  type                  String     // PET, SKIN, FOOD
+  rarity                String     // COMMON, RARE, EPIC, LEGENDARY
+  price                 Int
+  metadata              Json?      // Image URL or additional stats
+  
+  petId                 String?
+  pet                   Pet?       @relation(fields: [petId], references: [id])
+  
+  transactions          Transaction[]
+  
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+}
+
+model Transaction {
+  id                    String     @id @default(cuid())
+  userId                String
+  user                  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  itemId                String
+  item                  ShopItem   @relation(fields: [itemId], references: [id])
+  
+  amount                Int
+  type                  String     // PURCHASE, REWARD
+  
+  createdAt             DateTime   @default(now())
+}
