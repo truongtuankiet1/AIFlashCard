@@ -1,4 +1,5 @@
 import { prisma } from '../db';
+import { Prisma } from '@prisma/client';
 
 export interface SessionResult {
     userId: string;
@@ -215,7 +216,7 @@ export async function purchaseItem(userId: string, itemId: string) {
         throw new Error('Insufficient coins');
     }
 
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         // 1. Deduct coins
         await tx.user.update({
             where: { id: userId },

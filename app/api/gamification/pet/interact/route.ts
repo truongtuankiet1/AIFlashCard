@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/app/lib/auth';
 import { prisma } from '@/app/lib/db';
+import { Prisma } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
     try {
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
         // Prisma increment doesn't clamp easily. We'll do a raw update for better control if needed, 
         // but for now let's just use increment and handle caps in UI/logic.
 
-        await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             if (coinCost > 0) {
                 await tx.$executeRaw`UPDATE "User" SET "coins" = "coins" - ${BigInt(coinCost)} WHERE "id" = ${userId}`;
             }
