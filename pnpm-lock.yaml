@@ -18,7 +18,7 @@ importers:
         specifier: ^5.22.0
         version: 5.22.0(pg@8.18.0)
       '@prisma/client':
-        specifier: ^5.22.0
+        specifier: 5.22.0
         version: 5.22.0(prisma@5.22.0)
       '@tailwindcss/forms':
         specifier: ^0.5.10
@@ -100,7 +100,7 @@ importers:
         specifier: ^3.5.0
         version: 3.6.0(esbuild@0.27.3)
       prisma:
-        specifier: ^5.22.0
+        specifier: 5.22.0
         version: 5.22.0
 
 packages:
