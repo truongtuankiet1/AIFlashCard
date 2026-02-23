@@ -31,7 +31,7 @@ export default function MissionDashboard({ missions }: MissionDashboardProps) {
                 </div>
                 <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-full border border-yellow-100">
                     <span className="text-xs font-bold text-yellow-700">+{mission.rewardCoins}</span>
-                    <span className="text-xs">🪙</span>
+                    <span className="inline-flex items-center justify-center w-4 h-4 bg-yellow-400 rounded-full text-[10px] font-black text-yellow-900 shadow-sm">G</span>
                 </div>
             </div>
 

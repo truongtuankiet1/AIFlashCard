@@ -193,7 +193,10 @@ export default function StudyPage() {
               <div className="relative z-10 flex justify-around">
                 <div className="text-center">
                   <p className="text-[10px] uppercase font-black opacity-80 tracking-widest mb-1">Coins Earned</p>
-                  <p className="text-3xl font-black">+{gamificationResult.coinsEarned} 🪙</p>
+                  <p className="text-3xl font-black flex items-center justify-center gap-2">
+                    +{gamificationResult.coinsEarned}
+                    <span className="inline-flex items-center justify-center w-8 h-8 bg-yellow-400 rounded-full text-lg font-black text-yellow-900 shadow-md">G</span>
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] uppercase font-black opacity-80 tracking-widest mb-1">EXP Earned</p>
